@@ -14,8 +14,9 @@ def should_retry(post):
     return "sorry" in post_lower or "i can't" in post_lower
 
 def post_flow():
-    prompt = "Generate a short, impactful tweet with emojis about Binance code FIBP84UZ, encouraging people to use it. Include at least 3 relevant hashtags. Do not use markdown or bold formatting."
+    prompt = "Generate a short, impactful tweet with emojis about Binance code FIBP84UZ, encouraging people to use it. Include at least 7 relevant hashtags. Do not use markdown or bold formatting. Use meaningful hashtags and always use #Binance."
     post = m_generatePost.generate_post(prompt)
+    print("Gerado:", post)
 
     if should_retry(post):
         return
