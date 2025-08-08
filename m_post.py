@@ -1,7 +1,6 @@
 import json
 import requests
 from requests_oauthlib import OAuth1
-import os
 
 def post_tweet(post, watermark=False):
     try:
@@ -15,18 +14,21 @@ def post_tweet(post, watermark=False):
             keys["x-access-secret"]
         )
 
-        url = "https://api.twitter.com/2/tweets"
+        media_id = None
+        if watermark:
+            with open("binance.png", "rb") as image:
+                files = {"media": image}
+                upload_url = "https://upload.twitter.com/1.1/media/upload.json"
+                r = requests.post(upload_url, auth=auth, files=files)
+                if r.status_code == 200:
+                    media_id = r.json().get("media_id_string")
 
-        payload = {
-            "text": post
-        }
+        url = "https://api.twitter.com/2/tweets"
+        payload = {"text": post}
+        if media_id:
+            payload["media"] = {"media_ids": [media_id]}
 
         response = requests.post(url, auth=auth, json=payload)
-
-        if watermark:
-            files = {'media' : open('binance.png', 'rb')}
-            requests.post(url, auth=auth, files = files)
-
         return response.status_code, response.text
     except:
         return "Erro."
